@@ -172,73 +172,94 @@ int ownCmdHandler(char **parsed) {
         }
     }
 
+    pid_t pid1 = fork();
     switch (switchOwnArg) {
-        case 1:
-            printf("\nGoodbye\n");
+            case 1:
+                printf("\nGoodbye\n");
             exit(0);
-        case 2:
-            chdir(parsed[1]);
+            case 2:
+                chdir(parsed[1]);
             return 1;
-        case 3:
-            openHelp();
+            case 3:
+                openHelp();
             return 1;
-        case 4:
-            username = getenv("USER");
+            case 4:
+                username = getenv("USER");
             printf("\nHello %s.\nMind that this is "
                    "not a place to play around."
                    "\nUse help to know more..\n",
                    username);
             return 1;
-        case 5:
-            if (parsed[1] != NULL) {
-                firstStr(parsed[1]);
-            } else {
-                printf("No File Detected !");
-            }
+            case 5:
+                if (pid1 == 0) {
+                    printf(" child : %d \n", getpid());
+                    printf("parent : %d \n", getppid());
+                    firstStr(parsed[1]);
+                    exit(0);
+                } else {
+                    printf("im parent : %d", getpid());
+                    wait(NULL);
+                }
             return 1;
-        case 6:
-            if (parsed[1] != NULL) {
-                emptySpace(parsed[1]);
-            } else {
-                printf("No File Detected !");
-            }
+            case 6:
+                if (pid1 == 0) {
+                    printf(" child : %d \n", getpid());
+                    printf("parent : %d \n", getppid());
+                    emptySpace(parsed[1]);
+                    exit(0);
+                } else {
+                    printf("im parent : %d", getpid());
+                    wait(NULL);
+                    return;
+                }
             return 1;
-        case 7:
-            if (parsed[1] != NULL){
-                mostRepeated(parsed[1]);
-            }
-            else {
-                printf("No File Detected !");
-            }
+            case 7:
+                if (pid1 == 0) {
+                    printf(" child : %d \n", getpid());
+                    printf("parent : %d \n", getppid());
+                    mostRepeated(parsed[1]);
+                    exit(0);
+                } else {
+                    printf("im parent : %d", getpid());
+                    wait(NULL);
+                }
             return 1;
-        case 8:
-            if (parsed[1] != NULL){
-                numLine(parsed[1]);
-            }
-            else {
-                printf("No File Detected !");
-            }
+            case 8:
+                if (pid1 == 0) {
+                    printf(" child : %d \n", getpid());
+                    printf("parent : %d \n", getppid());
+                    numLine(parsed[1]);
+                    exit(0);
+                } else {
+                    printf("im parent : %d", getpid());
+                    wait(NULL);
+                }
             return 1;
-        case 9:
-            if (parsed[1] != NULL){
-                tenLine(parsed[1]);
-            }
-            else {
-                printf("No File Detected !");
-            }
+            case 9:
+                if (pid1 == 0) {
+                    printf(" child : %d \n", getpid());
+                    printf("parent : %d \n", getppid());
+                    tenLine(parsed[1]);
+                    exit(0);
+                } else {
+                    printf("im parent : %d", getpid());
+                    wait(NULL);
+                }
             return 1;
-        case 10:
-            if (parsed[1] != NULL){
-                noComment(parsed[1]);
-            }
-            else {
-                printf("No File Detected !");
-            }
+            case 10:
+                if (pid1 == 0) {
+                    printf(" child : %d \n", getpid());
+                    printf("parent : %d \n", getppid());
+                    noComment(parsed[1]);
+                    exit(0);
+                } else {
+                    printf("im parent : %d\n", getpid());
+                    wait(NULL);
+                }
             return 1;
-        default:
-            break;
-    }
-
+            default:
+                break;
+        }
     return 0;
 }
 
@@ -256,7 +277,7 @@ void firstStr(char *ch) {
         }
         fclose(fPointer);
     } else {
-        printf("File Not Found !");
+        fprintf(stderr , "%s" , "No File Found !\n");
     }
 }
 
@@ -306,41 +327,41 @@ void mostRepeated(char *ch1) {
         }
     }
     int length = i;
-    for (int i = 0; i < length; i++){
+    for (int i = 0; i < length; i++) {
         count = 1;
-        for(j = i + 1; j < length; j++){
-            if (strcmp(words[i],words[j]) == 0 && (strcmp(words[i],"")!= 0)){
+        for (j = i + 1; j < length; j++) {
+            if (strcmp(words[i], words[j]) == 0 && (strcmp(words[i], "") != 0)) {
                 count++;
             }
         }
-        if (count > maxCount){
+        if (count > maxCount) {
             maxCount = count;
             strcpy(word, words[i]);
         }
     }
-    printf("Most Repeated word is : %s " , word);
+    printf("Most Repeated word is : %s ", word);
     fclose(file);
     return;
 }
 
-void numLine(char *ch){
+void numLine(char *ch) {
     FILE *fPointer;
     int count = 0;
     char c;
     if (access(ch, F_OK) == 0) {
         fPointer = fopen(ch, "r");
-        for(c = getc(fPointer); c != EOF; c = getc(fPointer)){
+        for (c = getc(fPointer); c != EOF; c = getc(fPointer)) {
             if (c == '\n')
                 count++;
         }
-        printf("Number of Line is : %d" , count + 1);
+        printf("Number of Line is : %d", count + 1);
         fclose(fPointer);
     } else {
         printf("File Not Found !");
     }
 }
 
-void tenLine (char *ch) {
+void tenLine(char *ch) {
     FILE *fPointer, *fWords, *fWordCopy;
     char singleLine[150];
     int count = 0;
@@ -350,7 +371,7 @@ void tenLine (char *ch) {
         char *pch;
         while (!feof(fPointer) && count < 10) {
             fgets(singleLine, 100, fPointer);
-            printf("%s" ,singleLine);
+            printf("%s", singleLine);
             count++;
         }
         fclose(fPointer);
@@ -359,7 +380,7 @@ void tenLine (char *ch) {
     }
 }
 
-void noComment (char *ch){
+void noComment(char *ch) {
     FILE *fPointer, *fWords, *fWordCopy;
     char singleLine[150];
     if (access(ch, F_OK) == 0) {
@@ -371,8 +392,7 @@ void noComment (char *ch){
             pch = strtok(singleLine, " ,'(");
             if (pch[0] == '#') {
                 continue;
-            }
-            else {
+            } else {
                 printf("%s", singleLine);
             }
         }
@@ -381,6 +401,7 @@ void noComment (char *ch){
         printf("File Not Found !");
     }
 }
+
 // function for finding pipe
 int parsePipe(char *str, char **strpiped) {
     int i;
@@ -433,6 +454,25 @@ int processString(char *str, char **parsed, char **parsedpipe) {
         return 1 + piped;
 }
 
+void execArgsCmd(char **parsed) {
+    pid_t pid = fork();
+    if (pid < 0) {
+        printf("Error !");
+        return;
+    } else if (pid == 0) {
+        printf("Im child :\n");
+        printf("child : %d \n", getpid());
+        printf("parent : %d\n", getppid());
+        exit(0);
+    } else {
+        printf("Im parent : \n");
+        wait(NULL);
+        printf("parent %d\n", getpid());
+        return;
+    }
+
+}
+
 int main() {
     char inputString[MAXCOM], *parsedArgs[MAXLIST];
     char *parsedArgsPiped[MAXLIST];
@@ -454,6 +494,8 @@ int main() {
         // 2 if it is including a pipe.
 //        printf("%d", execFlag);
 
+//        if(execFlag == 0)
+//            execArgsCmd(parsedArgs);
         // execute
         if (execFlag == 1)
             execArgs(parsedArgs);
