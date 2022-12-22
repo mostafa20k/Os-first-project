@@ -288,7 +288,7 @@ void emptySpace(char *ch) {
 
     filePtr = fopen(ch, "r");
     if (filePtr == NULL) {
-        printf("file not found");
+        fprintf(stderr , "%s" , "No File Found !\n");
         return;
     }
 
@@ -313,7 +313,7 @@ void mostRepeated(char *ch1) {
 
     file = fopen(ch1, "r");
     if (file == NULL) {
-        printf("File Not Found !");
+        fprintf(stderr , "%s" , "No File Found !\n");
     }
     while ((read = getline(&line, &len, file)) != -1) {
         for (k = 0; line[k] != '\0'; k++) {
@@ -357,7 +357,7 @@ void numLine(char *ch) {
         printf("Number of Line is : %d", count + 1);
         fclose(fPointer);
     } else {
-        printf("File Not Found !");
+        fprintf(stderr , "%s" , "No File Found !\n");
     }
 }
 
@@ -376,7 +376,7 @@ void tenLine(char *ch) {
         }
         fclose(fPointer);
     } else {
-        printf("File Not Found !");
+        fprintf(stderr , "%s" , "No File Found !\n");
     }
 }
 
@@ -398,7 +398,7 @@ void noComment(char *ch) {
         }
         fclose(fPointer);
     } else {
-        printf("File Not Found !");
+        fprintf(stderr , "%s" , "No File Found !\n");
     }
 }
 
