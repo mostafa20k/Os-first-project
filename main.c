@@ -9,8 +9,8 @@
 #include<readline/history.h>
 #include <signal.h>
 
-#define MAXCOM 200 // max number of letters to be supported
-#define MAXLIST 200 // max number of commands to be supported
+#define maxLetters 200 // max number of letters to be supported
+#define maxCom 200 // max number of commands to be supported
 
 
 void firstStr(char *ch);
@@ -33,7 +33,7 @@ void printDir();
 
 int getInput(char *ch);
 
-int processString(char *str, char **parsed, char **parsedpipe);
+int processString(char *str, char **parsed, char **parsedPipe);
 
 void execArgs(char **parsed);
 
@@ -46,9 +46,9 @@ int commandHandler(char **parsed);
 void openHelp();
 
 int main() {
-    char inputString[MAXCOM], *parsedArgs[MAXLIST];
-    char *parsedArgsPiped[MAXLIST];
-    int execFlag = 0;
+    char inputString[maxLetters], *parsedArgs[maxCom];
+    char *parsedArgsPiped[maxCom];
+    int execFlag ;
     startShell();
 
     signal(SIGINT, sigintHandler);
@@ -63,7 +63,7 @@ int main() {
         // process
         execFlag = processString(inputString,
                                  parsedArgs, parsedArgsPiped);
-        // execflag returns zero if there is no command
+        // execFlag returns zero if there is no command
         // or it is a builtin command,
         // 1 if it is a simple command
         // 2 if it is including a pipe.
@@ -75,7 +75,6 @@ int main() {
 //        if (execFlag == 2)
 //            execArgsPiped(parsedArgs, parsedArgsPiped);
     }
-    return 0;
 }
 
 // Greeting shell during startup
@@ -147,12 +146,12 @@ void execArgs(char **parsed) {
 }
 
 // Function where the piped system commands is executed
-//void execArgsPiped(char **parsed, char **parsedpipe) {
+//void execArgsPiped(char **parsed, char **parsedPipe) {
 //    // 0 is read end, 1 is write end
-//    int pipefd[2];
+//    int pipeFd[2];
 //    pid_t p1, p2;
 //
-//    if (pipe(pipefd) < 0) {
+//    if (pipe(pipeFd) < 0) {
 //        printf("\nPipe could not be initialized");
 //        return;
 //    }
@@ -165,9 +164,9 @@ void execArgs(char **parsed) {
 //    if (p1 == 0) {
 //        // Child 1 executing..
 //        // It only needs to write at the write end
-//        close(pipefd[0]);
-//        dup2(pipefd[1], STDOUT_FILENO);
-//        close(pipefd[1]);
+//        close(pipeFd[0]);
+//        dup2(pipeFd[1], STDOUT_FILENO);
+//        close(pipeFd[1]);
 //
 //        if (execvp(parsed[0], parsed) < 0) {
 //            printf("\nCould not execute command 1..");
@@ -185,10 +184,10 @@ void execArgs(char **parsed) {
 //        // Child 2 executing..
 //        // It only needs to read at the read end
 //        if (p2 == 0) {
-//            close(pipefd[1]);
-//            dup2(pipefd[0], STDIN_FILENO);
-//            close(pipefd[0]);
-//            if (execvp(parsedpipe[0], parsedpipe) < 0) {
+//            close(pipeFd[1]);
+//            dup2(pipeFd[0], STDIN_FILENO);
+//            close(pipeFd[0]);
+//            if (execvp(parsedPipe[0], parsedPipe) < 0) {
 //                printf("\nCould not execute command 2..");
 //                exit(0);
 //            }
@@ -206,12 +205,12 @@ void openHelp() {
          "\nSupported Commands are :"
          "\n>>cd"
          "\n>>ls"
-         "\n>>firststr"
-         "\n>>mostreap"
-         "\n>>nospace"
-         "\n>>notcomment"
-         "\n>>numline"
-         "\n>>tenline"
+         "\n>>firstStr"
+         "\n>>mostReap"
+         "\n>>noSpace"
+         "\n>>notComment"
+         "\n>>numLine"
+         "\n>>tenLine"
          "\n>>exit");
 }
 
@@ -236,22 +235,22 @@ int commandHandler(char **parsed) {
         } else if (strcmp(parsed[0], "help") == 0) {
             openHelp();
             return 1;
-        } else if (strcmp(parsed[0], "firststr") == 0) {
+        } else if (strcmp(parsed[0], "firstStr") == 0) {
             firstStr(parsed[1]);
             return 1;
-        } else if (strcmp(parsed[0], "nospace") == 0) {
+        } else if (strcmp(parsed[0], "noSpace") == 0) {
             emptySpace(parsed[1]);
             return 1;
-        } else if (strcmp(parsed[0], "mostrep") == 0) {
+        } else if (strcmp(parsed[0], "mostRep") == 0) {
             mostRepeated(parsed[1]);
             return 1;
-        } else if (strcmp(parsed[0], "numline") == 0) {
+        } else if (strcmp(parsed[0], "numLine") == 0) {
             numLine(parsed[1]);
             return 1;
-        } else if (strcmp(parsed[0], "tenline") == 0) {
+        } else if (strcmp(parsed[0], "tenLine") == 0) {
             tenLine(parsed[1]);
             return 1;
-        } else if (strcmp(parsed[0], "nocomment") == 0) {
+        } else if (strcmp(parsed[0], "noComment") == 0) {
             noComment(parsed[1]);
             return 1;
         } else if (strcmp(parsed[0], "history") == 0) {
@@ -410,10 +409,10 @@ void noComment(char *ch) {
 void historyFunc() {
     FILE *file;
     file = fopen("history.txt", "w");
-    HISTORY_STATE *myhist = history_get_history_state();
+    HISTORY_STATE *myHist = history_get_history_state();
     /* retrieve the history list */
-    HIST_ENTRY **mylist = history_list();
-    for (int i = 0; i < myhist->length; i++) { /* output history list */
+    HIST_ENTRY **myList = history_list();
+    for (int i = 0; i < myHist->length; i++) { /* output history list */
         printf("%s \n", mylist[i]->line);
         fprintf(file, "%s\n ", mylist[i]->line);
     }
@@ -421,15 +420,15 @@ void historyFunc() {
 }
 
 // function for finding pipe
-int parsePipe(char *str, char **strpiped) {
+int parsePipe(char *str, char **strPiped) {
     int i;
     for (i = 0; i < 2; i++) {
-        strpiped[i] = strsep(&str, "|");
-        if (strpiped[i] == NULL)
+        strPiped[i] = strsep(&str, "|");
+        if (strPiped[i] == NULL)
             break;
     }
 
-    if (strpiped[1] == NULL)
+    if (strPiped[1] == NULL)
         return 0; // returns zero if no pipe is found.
     else {
         return 1;
@@ -440,7 +439,7 @@ int parsePipe(char *str, char **strpiped) {
 void parseCommands(char *str, char **parsed) {
     int i;
 
-    for (i = 0; i < MAXLIST; i++) {
+    for (i = 0; i < maxCom; i++) {
         parsed[i] = strsep(&str, " ");
 
         if (parsed[i] == NULL)
@@ -450,16 +449,16 @@ void parseCommands(char *str, char **parsed) {
     }
 }
 
-int processString(char *str, char **parsed, char **parsedpipe) {
+int processString(char *str, char **parsed, char **parsedPipe) {
 
-    char *strpiped[2];
+    char *strPiped[2];
     int piped = 0;
 
-    piped = parsePipe(str, strpiped);
+    piped = parsePipe(str, strPiped);
 
     if (piped) {
-        parseCommands(strpiped[0], parsed);
-        parseCommands(strpiped[1], parsedpipe);
+        parseCommands(strPiped[0], parsed);
+        parseCommands(strPiped[1], parsedPipe);
 
     } else {
         parseCommands(str, parsed);
