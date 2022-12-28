@@ -146,58 +146,58 @@ void execArgs(char **parsed) {
 }
 
 // Function where the piped system commands is executed
-//void execArgsPiped(char **parsed, char **parsedPipe) {
-//    // 0 is read end, 1 is write end
-//    int pipeFd[2];
-//    pid_t p1, p2;
-//
-//    if (pipe(pipeFd) < 0) {
-//        printf("\nPipe could not be initialized");
-//        return;
-//    }
-//    p1 = fork();
-//    if (p1 < 0) {
-//        printf("\nCould not fork");
-//        return;
-//    }
-//
-//    if (p1 == 0) {
-//        // Child 1 executing..
-//        // It only needs to write at the write end
-//        close(pipeFd[0]);
-//        dup2(pipeFd[1], STDOUT_FILENO);
-//        close(pipeFd[1]);
-//
-//        if (execvp(parsed[0], parsed) < 0) {
-//            printf("\nCould not execute command 1..");
-//            exit(0);
-//        }
-//    } else {
-//        // Parent executing
-//        p2 = fork();
-//
-//        if (p2 < 0) {
-//            printf("\nCould not fork");
-//            return;
-//        }
-//
-//        // Child 2 executing..
-//        // It only needs to read at the read end
-//        if (p2 == 0) {
-//            close(pipeFd[1]);
-//            dup2(pipeFd[0], STDIN_FILENO);
-//            close(pipeFd[0]);
-//            if (execvp(parsedPipe[0], parsedPipe) < 0) {
-//                printf("\nCould not execute command 2..");
-//                exit(0);
-//            }
-//        } else {
-//            // parent executing, waiting for two children
-//            wait(NULL);
-//            wait(NULL);
-//        }
-//    }
-//}
+void execArgsPiped(char **parsed, char **parsedPipe) {
+    // 0 is read end, 1 is write end
+    int pipeFd[2];
+    pid_t p1, p2;
+
+    if (pipe(pipeFd) < 0) {
+        printf("\nPipe could not be initialized");
+        return;
+    }
+    p1 = fork();
+    if (p1 < 0) {
+        printf("\nCould not fork");
+        return;
+    }
+
+    if (p1 == 0) {
+        // Child 1 executing..
+        // It only needs to write at the write end
+        close(pipeFd[0]);
+        dup2(pipeFd[1], STDOUT_FILENO);
+        close(pipeFd[1]);
+
+        if (execvp(parsed[0], parsed) < 0) {
+            printf("\nCould not execute command 1..");
+            exit(0);
+        }
+    } else {
+        // Parent executing
+        p2 = fork();
+
+        if (p2 < 0) {
+            printf("\nCould not fork");
+            return;
+        }
+
+        // Child 2 executing..
+        // It only needs to read at the read end
+        if (p2 == 0) {
+            close(pipeFd[1]);
+            dup2(pipeFd[0], STDIN_FILENO);
+            close(pipeFd[0]);
+            if (execvp(parsedPipe[0], parsedPipe) < 0) {
+                printf("\nCould not execute command 2..");
+                exit(0);
+            }
+        } else {
+            // parent executing, waiting for two children
+            wait(NULL);
+            wait(NULL);
+        }
+    }
+}
 
 // Help command builtin
 void openHelp() {
@@ -216,6 +216,11 @@ void openHelp() {
 
 // Function to execute builtin commands
 int commandHandler(char **parsed) {
+    if (strcmp(parsed[0], "exit") == 0) {
+        printf("Exit from shell ! \n");
+        exit(0);
+        return 1;
+    }
     pid_t pid1 = fork();
     if (pid1 < 0) {
         fprintf(stderr, "%s", "No Process Created !\n");
@@ -225,11 +230,7 @@ int commandHandler(char **parsed) {
         printf(" child : %d \n", getpid());
         printf("parent : %d \n", getppid());
 
-        if (strcmp(parsed[0], "exit") == 0) {
-            printf("Exit from shell ! \n");
-            exit(0);
-            return 1;
-        } else if (strcmp(parsed[0], "cd") == 0) {
+            if (strcmp(parsed[0], "cd") == 0) {
             chdir(parsed[1]);
             return 1;
         } else if (strcmp(parsed[0], "help") == 0) {
@@ -413,8 +414,8 @@ void historyFunc() {
     /* retrieve the history list */
     HIST_ENTRY **myList = history_list();
     for (int i = 0; i < myHist->length; i++) { /* output history list */
-        printf("%s \n", mylist[i]->line);
-        fprintf(file, "%s\n ", mylist[i]->line);
+        printf("%s \n", myList[i]->line);
+        fprintf(file, "%s\n ", myList[i]->line);
     }
     fclose(file);
 }
