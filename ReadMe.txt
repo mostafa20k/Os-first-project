@@ -10,6 +10,6 @@ d:notComment
 f:numLine
 g:tenLine
 نمره اضافه های پیاده سازی شده:
-استفاده از گیت: https://github.com/mostafa20k/Os-first-porject
+استفاده از گیت: https://github.com/mostafa20k/Os-first-project
 گشتن در هیستوری با دکمه های جهت
 هندل کردن ctrl +c با system signal 
