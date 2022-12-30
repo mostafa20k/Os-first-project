@@ -154,7 +154,7 @@ int commandHandler(char **parsed) {
     pid_t pid1 = fork();
     if (pid1 < 0) {
         fprintf(stderr, "%s", "No Process Created !\n");
-        return;
+        return 0;
     }
     if (pid1 == 0) {
         if (strcmp(parsed[0], "exit") == 0) {
@@ -242,10 +242,10 @@ void emptySpace(char *ch) {
 // function to print most repeated word in text
 void mostRepeated(char *ch1) {
     FILE *file;
-    char ch, *line;
-    int len = 0, read;
+    char *line;
+    int len = 0;
     char words[100][100], word[20];
-    int i = 0, j = 0, k = 0, maxCount = 0, count = 0, index = 0;
+    int i = 0, j = 0, maxCount = 0, count = 0, index = 0;
 
     file = fopen(ch1, "r");
     if (file == NULL) {
@@ -325,13 +325,15 @@ void tenLine(char *ch) {
 void noComment(char *ch) {
     FILE *file;
     char singleLine[100];
+    char slCpy[100];
     if (access(ch, F_OK) == 0) {
         file = fopen(ch, "r");
 
         char *pointerCh;
         while (!feof(file)) {
             fgets(singleLine, 100, file);
-            pointerCh = strtok(singleLine, " ");
+            strcpy(slCpy, singleLine);
+            pointerCh = strtok(slCpy, " ");
             if (pointerCh[0] == '#') {
                 continue;
             } else {
@@ -381,4 +383,3 @@ int processString(char *str, char **parsedStr) {
     else
         return 1;
 }
-
