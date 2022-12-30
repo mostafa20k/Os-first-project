@@ -199,15 +199,13 @@ int commandHandler(char **parsed) {
 // function to print first string of each line
 void firstStr(char *ch) {
     FILE *file;
-    char singleLine[100];
     if (access(ch, F_OK) == 0) {
         file = fopen(ch, "r");
 
-        char *pointerCh;
+        char first[30];
         while (!feof(file)) {
-            fgets(singleLine, 100, file);
-            pointerCh = strtok(singleLine, " ");
-            printf("%s\n", pointerCh);
+            fscanf(file, "%s%*[^\n]",first);
+            printf("%s\n", first);
         }
         fclose(file);
     } else {
